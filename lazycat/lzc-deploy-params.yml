@@ -1,11 +1,4 @@
 params:
-  - id: MULTICA_APP_URL
-    type: string
-    name: "Multica 公开 URL"
-    description: "本应用安装后的完整对外 URL，用于 OAuth 回调、CORS 允许列表与 cookie 发放。例如：https://multica.<your-box>.heiyu.space"
-    default_value: ""
-    optional: false
-
   - id: ALLOW_SIGNUP
     type: string
     name: "允许新用户注册"
@@ -44,7 +37,7 @@ params:
   - id: GOOGLE_CLIENT_ID
     type: string
     name: "Google OAuth Client ID (可选)"
-    description: "Google Cloud Console 创建 OAuth 2.0 凭据后填入。回调 URL 需配置为 <MULTICA_APP_URL>/auth/callback。"
+    description: "Google Cloud Console 创建 OAuth 2.0 凭据后填入。回调 URL 需在 Google 那边设置为 https://multica.<your-box-domain>/auth/callback。"
     default_value: ""
     optional: true
 

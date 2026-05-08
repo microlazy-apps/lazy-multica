@@ -1,5 +1,6 @@
 package: cloud.lazycat.app.multica
 version: ${VERSION}
+
 name: Multica
 description: 开源托管式 AI 编码代理平台 — 给 AI agent 派任务、跟进度、复用技能
 author: multica-ai
@@ -11,15 +12,14 @@ locales:
     description: 开源的托管式 AI 编码代理平台。把 Claude Code、Codex、Copilot CLI、Gemini、Cursor Agent 等 AI agent 当成真正的"远程同事"使用 — 派工单、跟进度、积累可复用技能。
     usage: |
       ## 首次使用
-      1. 安装时填写「Multica 公开 URL」，例如 `https://multica.<your-box>.heiyu.space`
-      2. 安装完成后访问该 URL，输入邮箱接收登录验证码
-      3. 未配置 Resend 时，验证码会打印到 `backend` 容器日志，可在懒猫管理后台查看
-      4. 在本地机器安装 `multica` CLI 并启动 daemon 让 AI agent 接活：
+      1. 安装完成后访问 `https://multica.<your-box>.heiyu.space`，输入邮箱接收登录验证码
+      2. 未配置 Resend 时，验证码会打印到 `backend` 容器日志，可在懒猫管理后台查看
+      3. 在本地机器安装 `multica` CLI 并启动 daemon 让 AI agent 接活：
          ```sh
          brew install multica-ai/tap/multica
-         multica setup self-host --server-url <MULTICA_APP_URL> --app-url <MULTICA_APP_URL>
+         multica setup self-host --server-url https://multica.<your-box> --app-url https://multica.<your-box>
          ```
-      5. 在 Web UI 的「Settings → Agents」创建 agent，并把 issue 派给它
+      4. 在 Web UI 的「Settings → Agents」创建 agent，并把 issue 派给它
 
       ## 资源占用
       - 推荐配置：≥ 2 核 CPU，≥ 2GB 内存
@@ -39,16 +39,16 @@ locales:
     description: Open-source managed AI coding agents platform. Turn coding CLIs (Claude Code, Codex, Copilot CLI, Gemini, Cursor Agent, ...) into real teammates — assign tasks, track progress, compound reusable skills.
     usage: |
       ## Getting Started
-      1. At install, set "Multica Public URL" to e.g. `https://multica.<your-box>.heiyu.space`
-      2. After install, open that URL and request an email verification code
-      3. Without Resend configured, the code is printed to the `backend`
+      1. After install, open `https://multica.<your-box>.heiyu.space`
+         and request an email verification code
+      2. Without Resend configured, the code is printed to the `backend`
          container logs (visible in the lazycat admin console)
-      4. Install the `multica` CLI on your local machine and start the daemon:
+      3. Install the `multica` CLI on your local machine and start the daemon:
          ```sh
          brew install multica-ai/tap/multica
-         multica setup self-host --server-url <MULTICA_APP_URL> --app-url <MULTICA_APP_URL>
+         multica setup self-host --server-url https://multica.<your-box> --app-url https://multica.<your-box>
          ```
-      5. In the web UI, go to Settings → Agents to create an agent, then
+      4. In the web UI, go to Settings → Agents to create an agent, then
          assign issues to it.
 
       ## Resource requirements

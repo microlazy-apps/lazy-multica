@@ -41,13 +41,20 @@ rewrite handler — confirmed in upstream `apps/web/next.config.ts`.
 |-------------------------|------------------------------------------------|
 | `DATABASE_URL` (backend)| Constructed inline; password = `stable_secret` |
 | `JWT_SECRET` (backend)  | `stable_secret "JWT_SECRET"`                   |
-| `MULTICA_APP_URL`       | deploy_param (required)                        |
-| `FRONTEND_ORIGIN`       | mirrors `MULTICA_APP_URL`                      |
-| `CORS_ALLOWED_ORIGINS`  | mirrors `MULTICA_APP_URL`                      |
-| `GOOGLE_REDIRECT_URI`   | `<MULTICA_APP_URL>/auth/callback`              |
+| `MULTICA_APP_URL`       | `https://{{.S.AppDomain}}` (lazycat-injected)  |
+| `FRONTEND_ORIGIN`       | same as `MULTICA_APP_URL`                      |
+| `CORS_ALLOWED_ORIGINS`  | same as `MULTICA_APP_URL`                      |
+| `GOOGLE_REDIRECT_URI`   | `https://{{.S.AppDomain}}/auth/callback`       |
 | `RESEND_*` / `GOOGLE_*` | deploy_params (optional)                       |
 | `ALLOW_SIGNUP` / `ALLOWED_*` | deploy_params (optional)                  |
 | `POSTGRES_PASSWORD` (postgres + DATABASE_URL) | `stable_secret "POSTGRES_PASSWORD"` — same key on both ends |
+
+`.S.AppDomain` is a built-in lazycat template var that resolves to
+`<subdomain>.<box-domain>` (e.g. `multica.maolv.heiyu.space`) at render
+time, so the wrapper needs no required deploy_param. Other built-ins
+under `.S`: `BoxName`, `BoxDomain`, `AppDomain`, `OSVersion`,
+`IsMultiInstance`, `DeployUID`, `DeployID`. Reference: lazycat
+[advanced-manifest-render](https://developer.lazycat.cloud/advanced-manifest-render.html).
 
 `stable_secret` produces 128 hex chars — fits Postgres passwords and JWT
 HMAC secrets without trimming.
@@ -120,10 +127,10 @@ curl -sSI "https://registry-1.docker.io/v2/pgvector/pgvector/manifests/pg17" \
   the server (this lpk) from the daemon (which runs on each user's own
   machine and shells out to `claude` / `codex` / etc.). The lpk by
   itself doesn't run any AI model.
-- **OAuth callback URL is fixed at install.** Changing
-  `MULTICA_APP_URL` requires reinstall (or editing the
-  `cloud.lazycat.app.multica.deploy.json` and restarting the app), and
-  the matching Google OAuth client must be updated.
+- **OAuth callback URL is auto-derived.** It tracks the lazycat
+  `AppDomain`, so it changes only if the box domain itself changes.
+  When configuring Google OAuth credentials, set the redirect URI to
+  `https://multica.<your-box-domain>/auth/callback` to match.
 - **License is modified Apache 2.0.** Internal use is fine; SaaS
   hosting / commercial embedding / frontend logo removal are not.
 

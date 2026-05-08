@@ -8,26 +8,20 @@
 
 ## 安装
 
-通过懒猫微服「应用商店」搜索 *Multica* 安装。
+通过懒猫微服「应用商店」搜索 *Multica* 安装。无必填参数 — 应用 URL 自动从盒子的子域名推导（即 `https://multica.<your-box-domain>`）。
 
-安装时需要填写一个**必填参数**：
-
-| 参数 | 示例 | 说明 |
-|------|------|------|
-| `MULTICA_APP_URL` | `https://multica.your-box.heiyu.space` | 本应用安装后的对外完整 URL，用于 OAuth 回调、CORS、cookie 域 |
-
-可选参数（不填不影响基本功能）：
+可选参数（不填不影响基本登录与使用）：
 
 | 参数 | 用途 |
 |------|------|
 | `RESEND_API_KEY` + `RESEND_FROM_EMAIL` | 邮箱验证码通过 [Resend](https://resend.com) 发送；不填则验证码打印到 backend 容器日志（私有部署够用） |
-| `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` | Google OAuth 登录（在 Google Cloud Console 把回调 URL 设为 `<MULTICA_APP_URL>/auth/callback`） |
+| `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` | Google OAuth 登录（在 Google Cloud Console 把回调 URL 设为 `https://multica.<your-box-domain>/auth/callback`） |
 | `ALLOW_SIGNUP` | 是否允许公开注册（默认 `true`） |
 | `ALLOWED_EMAILS` / `ALLOWED_EMAIL_DOMAINS` | 邮箱白名单（与 `ALLOW_SIGNUP=false` 搭配使用） |
 
 ## 首次登录
 
-1. 访问 `MULTICA_APP_URL`
+1. 访问 `https://multica.<your-box-domain>`
 2. 输入邮箱 → 点击发送验证码
 3. **未配置 Resend 时**：验证码会打印到 `backend` 容器日志
    ```sh

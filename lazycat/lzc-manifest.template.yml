@@ -44,12 +44,13 @@ services:
       - APP_ENV=production
       - DATABASE_URL=postgres://multica:{{stable_secret "POSTGRES_PASSWORD"}}@postgres:5432/multica?sslmode=disable
       - JWT_SECRET={{stable_secret "JWT_SECRET"}}
-      # Public URL of this lazycat app (e.g. https://multica.your-box.heiyu.space).
-      # Used as the OAuth redirect base, the frontend origin allowed by CORS,
-      # and the cookie-issuing origin.
-      - MULTICA_APP_URL={{.U.MULTICA_APP_URL}}
-      - FRONTEND_ORIGIN={{.U.MULTICA_APP_URL}}
-      - CORS_ALLOWED_ORIGINS={{.U.MULTICA_APP_URL}}
+      # Public URL of this lazycat app, derived from the lazycat box's
+      # subdomain mapping (.S.AppDomain == "<subdomain>.<box-domain>").
+      # Used as the OAuth redirect base, frontend origin for CORS, and
+      # the cookie-issuing origin.
+      - MULTICA_APP_URL=https://{{.S.AppDomain}}
+      - FRONTEND_ORIGIN=https://{{.S.AppDomain}}
+      - CORS_ALLOWED_ORIGINS=https://{{.S.AppDomain}}
       # Email — leave RESEND_API_KEY blank during install to print verification
       # codes to backend logs (good for first-login on a private box).
       - RESEND_API_KEY={{.U.RESEND_API_KEY}}
@@ -57,7 +58,7 @@ services:
       # Google OAuth (optional)
       - GOOGLE_CLIENT_ID={{.U.GOOGLE_CLIENT_ID}}
       - GOOGLE_CLIENT_SECRET={{.U.GOOGLE_CLIENT_SECRET}}
-      - GOOGLE_REDIRECT_URI={{.U.MULTICA_APP_URL}}/auth/callback
+      - GOOGLE_REDIRECT_URI=https://{{.S.AppDomain}}/auth/callback
       # Sign-up gating
       - ALLOW_SIGNUP={{.U.ALLOW_SIGNUP}}
       - ALLOWED_EMAILS={{.U.ALLOWED_EMAILS}}
