@@ -49,6 +49,14 @@ rewrite handler — confirmed in upstream `apps/web/next.config.ts`.
 | `ALLOW_SIGNUP` / `ALLOWED_*` | deploy_params (optional)                  |
 | `MULTICA_DEV_VERIFICATION_CODE` | deploy_param (optional). When set, sprig `if` flips `APP_ENV` from `production` → `development` so upstream honors the fixed code. |
 | `APP_ENV`               | `production` by default; flipped to `development` only if `MULTICA_DEV_VERIFICATION_CODE` is set |
+
+**Important:** every `{{.U.X}}` reference is wrapped in `| default ""`
+(or a meaningful default). lazycat renders a *missing* deploy_param
+key as the literal string `<no value>`, NOT as an empty string. That
+silently breaks `splitAndTrim`-style consumers (e.g. multica's
+`ALLOWED_EMAILS` allowlist treats `<no value>` as a single entry and
+rejects every signup). The `| default` pipe converts the missing key
+to a real empty string before substitution.
 | `POSTGRES_PASSWORD` (postgres + DATABASE_URL) | `stable_secret "POSTGRES_PASSWORD"` — same key on both ends |
 
 `.S.AppDomain` is a built-in lazycat template var that resolves to

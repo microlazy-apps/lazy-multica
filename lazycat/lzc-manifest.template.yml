@@ -41,12 +41,17 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - PORT=8080
+      # NOTE: every {{.U.X}} reference uses `default ""` because lazycat
+      # renders missing deploy_params as the literal string "<no value>",
+      # which breaks `splitAndTrim` (treats it as an allowlist entry) and
+      # any other consumer that does an emptiness check.
+      #
       # APP_ENV gates upstream's "fixed verification code" feature.
       # Production = random 6-digit codes (printed to logs without Resend).
       # When the user sets MULTICA_DEV_VERIFICATION_CODE we flip to development
       # so the upstream backend honors it.
-      - APP_ENV={{ if .U.MULTICA_DEV_VERIFICATION_CODE }}development{{ else }}production{{ end }}
-      - MULTICA_DEV_VERIFICATION_CODE={{.U.MULTICA_DEV_VERIFICATION_CODE}}
+      - APP_ENV={{ if (.U.MULTICA_DEV_VERIFICATION_CODE | default "") }}development{{ else }}production{{ end }}
+      - MULTICA_DEV_VERIFICATION_CODE={{ .U.MULTICA_DEV_VERIFICATION_CODE | default "" }}
       - DATABASE_URL=postgres://multica:{{stable_secret "POSTGRES_PASSWORD"}}@postgres:5432/multica?sslmode=disable
       - JWT_SECRET={{stable_secret "JWT_SECRET"}}
       # Public URL of this lazycat app, derived from the lazycat box's
@@ -58,16 +63,16 @@ services:
       - CORS_ALLOWED_ORIGINS=https://{{.S.AppDomain}}
       # Email — leave RESEND_API_KEY blank during install to print verification
       # codes to backend logs (good for first-login on a private box).
-      - RESEND_API_KEY={{.U.RESEND_API_KEY}}
-      - RESEND_FROM_EMAIL={{.U.RESEND_FROM_EMAIL}}
+      - RESEND_API_KEY={{ .U.RESEND_API_KEY | default "" }}
+      - RESEND_FROM_EMAIL={{ .U.RESEND_FROM_EMAIL | default "noreply@multica.local" }}
       # Google OAuth (optional)
-      - GOOGLE_CLIENT_ID={{.U.GOOGLE_CLIENT_ID}}
-      - GOOGLE_CLIENT_SECRET={{.U.GOOGLE_CLIENT_SECRET}}
+      - GOOGLE_CLIENT_ID={{ .U.GOOGLE_CLIENT_ID | default "" }}
+      - GOOGLE_CLIENT_SECRET={{ .U.GOOGLE_CLIENT_SECRET | default "" }}
       - GOOGLE_REDIRECT_URI=https://{{.S.AppDomain}}/auth/callback
       # Sign-up gating
-      - ALLOW_SIGNUP={{.U.ALLOW_SIGNUP}}
-      - ALLOWED_EMAILS={{.U.ALLOWED_EMAILS}}
-      - ALLOWED_EMAIL_DOMAINS={{.U.ALLOWED_EMAIL_DOMAINS}}
+      - ALLOW_SIGNUP={{ .U.ALLOW_SIGNUP | default "true" }}
+      - ALLOWED_EMAILS={{ .U.ALLOWED_EMAILS | default "" }}
+      - ALLOWED_EMAIL_DOMAINS={{ .U.ALLOWED_EMAIL_DOMAINS | default "" }}
     binds:
       - /lzcapp/var/uploads:/app/data/uploads
     healthcheck:
