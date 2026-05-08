@@ -11,6 +11,7 @@ screenshots:
     - lazycat/screenshots/01-dashboard.png
     - lazycat/screenshots/02-issues.png
     - lazycat/screenshots/03-agent.png
+    - lazycat/screenshots/04-configure-cli.png
   mobile: []
 
 description:
