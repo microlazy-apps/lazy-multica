@@ -27,7 +27,7 @@
 3. **未配置 Resend 时**：验证码会打印到 `backend` 容器日志
    ```sh
    ssh root@<your-box>
-   lpk-manager logs cloud.lazycat.app.multica backend | grep "Verification code"
+   lpk-manager logs cloud.lazycat.app.lazy-multica backend | grep "Verification code"
    ```
 4. 输入验证码登录
 

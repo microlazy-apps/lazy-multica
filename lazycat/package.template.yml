@@ -1,4 +1,4 @@
-package: cloud.lazycat.app.multica
+package: cloud.lazycat.app.lazy-multica
 version: ${VERSION}
 
 name: Multica
@@ -6,6 +6,11 @@ description: 开源托管式 AI 编码代理平台 — 给 AI agent 派任务、
 author: multica-ai
 license: Apache-2.0-modified
 homepage: https://github.com/microlazy-apps/lazy-multica
+
+unsupported_platforms:
+  - ios
+  - android
+
 locales:
   zh-CN:
     name: Multica
