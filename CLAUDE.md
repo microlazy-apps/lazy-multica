@@ -2,6 +2,19 @@
 
 懒猫微服 lpk wrapper for [multica-ai/multica](https://github.com/multica-ai/multica).
 
+## Lazycat appstore identifiers
+
+- **package id**: `cloud.lazycat.app.lazy-multica`
+  (note the `lazy-` prefix — `cloud.lazycat.app.multica` was already
+  claimed by another account in the dev center; CI's
+  `LAZYCAT_USERNAME` got 403 on it, so we own the namespaced version)
+- **app_id**: `5364` (assigned by `/api/v3/developer/app/create` on
+  the v0.0.7 bootstrap run, 2026-05-08)
+- **subdomain**: `multica` → `https://multica.<box-domain>`
+- **bootstrap workflow**: when re-running `bootstrap-app.yml` to
+  resubmit a fix, pass `app_id=5364` so the workflow skips
+  `/app/create` (which would 500 on duplicate package).
+
 ## Architecture
 
 **Vendor + patches main + 2 pre-mirrored dependencies** (multi-service stack).
