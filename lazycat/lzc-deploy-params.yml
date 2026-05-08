@@ -1,0 +1,56 @@
+params:
+  - id: MULTICA_APP_URL
+    type: string
+    name: "Multica 公开 URL"
+    description: "本应用安装后的完整对外 URL，用于 OAuth 回调、CORS 允许列表与 cookie 发放。例如：https://multica.<your-box>.heiyu.space"
+    default_value: ""
+    optional: false
+
+  - id: ALLOW_SIGNUP
+    type: string
+    name: "允许新用户注册"
+    description: "true / false。私有部署可关闭后用 ALLOWED_EMAILS / ALLOWED_EMAIL_DOMAINS 精细控制。"
+    default_value: "true"
+    optional: true
+
+  - id: ALLOWED_EMAILS
+    type: string
+    name: "允许的邮箱列表"
+    description: "逗号分隔的精确邮箱白名单。留空表示不启用。"
+    default_value: ""
+    optional: true
+
+  - id: ALLOWED_EMAIL_DOMAINS
+    type: string
+    name: "允许的邮箱域名"
+    description: "逗号分隔的邮箱域名白名单（如 example.com,team.io）。留空表示不启用。"
+    default_value: ""
+    optional: true
+
+  - id: RESEND_API_KEY
+    type: password
+    name: "Resend API Key (可选)"
+    description: "配置后用于发送邮箱验证码。留空时验证码会打印到 backend 容器日志，仅推荐在私有内网首次登录时使用。"
+    default_value: ""
+    optional: true
+
+  - id: RESEND_FROM_EMAIL
+    type: string
+    name: "Resend 发件人邮箱"
+    description: "Resend 中已验证的发件人邮箱（如 noreply@yourdomain.com）。仅在配置了 RESEND_API_KEY 时生效。"
+    default_value: "noreply@multica.local"
+    optional: true
+
+  - id: GOOGLE_CLIENT_ID
+    type: string
+    name: "Google OAuth Client ID (可选)"
+    description: "Google Cloud Console 创建 OAuth 2.0 凭据后填入。回调 URL 需配置为 <MULTICA_APP_URL>/auth/callback。"
+    default_value: ""
+    optional: true
+
+  - id: GOOGLE_CLIENT_SECRET
+    type: password
+    name: "Google OAuth Client Secret (可选)"
+    description: "与 GOOGLE_CLIENT_ID 配套。"
+    default_value: ""
+    optional: true

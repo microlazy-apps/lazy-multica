@@ -1,0 +1,92 @@
+application:
+  subdomain: multica
+  upstreams:
+    - location: /
+      backend: http://main:3000
+  public_path:
+    - /
+  health_check:
+    test_url: http://main:3000
+    timeout: 10s
+    start_period: 90s
+
+services:
+  # main = Next.js web frontend. It owns the public route and reverse-proxies
+  # /api, /ws, /auth to the backend service via Next.js rewrites
+  # (REMOTE_API_URL is baked into the image as http://backend:8080).
+  main:
+    image: ${LAZYCAT_IMAGE}
+    environment:
+      - TZ=Asia/Shanghai
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
+      # Override only if upstream rewrite default changes; the published image
+      # already bakes REMOTE_API_URL=http://backend:8080.
+      - REMOTE_API_URL=http://backend:8080
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "--tries=1", "-T", "5", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      - backend
+
+  # backend = Go server (REST + WebSocket on :8080). Runs migrate up then
+  # exec ./server. depends_on is start-order-only, so the backend may crash
+  # once before postgres accepts connections — lazycat restarts the service
+  # and migrate succeeds on retry.
+  backend:
+    image: registry.lazycat.cloud/lee/multica-ai/multica-backend:06b6cf970a98460a
+    environment:
+      - TZ=Asia/Shanghai
+      - PORT=8080
+      - APP_ENV=production
+      - DATABASE_URL=postgres://multica:{{stable_secret "POSTGRES_PASSWORD"}}@postgres:5432/multica?sslmode=disable
+      - JWT_SECRET={{stable_secret "JWT_SECRET"}}
+      # Public URL of this lazycat app (e.g. https://multica.your-box.heiyu.space).
+      # Used as the OAuth redirect base, the frontend origin allowed by CORS,
+      # and the cookie-issuing origin.
+      - MULTICA_APP_URL={{.U.MULTICA_APP_URL}}
+      - FRONTEND_ORIGIN={{.U.MULTICA_APP_URL}}
+      - CORS_ALLOWED_ORIGINS={{.U.MULTICA_APP_URL}}
+      # Email — leave RESEND_API_KEY blank during install to print verification
+      # codes to backend logs (good for first-login on a private box).
+      - RESEND_API_KEY={{.U.RESEND_API_KEY}}
+      - RESEND_FROM_EMAIL={{.U.RESEND_FROM_EMAIL}}
+      # Google OAuth (optional)
+      - GOOGLE_CLIENT_ID={{.U.GOOGLE_CLIENT_ID}}
+      - GOOGLE_CLIENT_SECRET={{.U.GOOGLE_CLIENT_SECRET}}
+      - GOOGLE_REDIRECT_URI={{.U.MULTICA_APP_URL}}/auth/callback
+      # Sign-up gating
+      - ALLOW_SIGNUP={{.U.ALLOW_SIGNUP}}
+      - ALLOWED_EMAILS={{.U.ALLOWED_EMAILS}}
+      - ALLOWED_EMAIL_DOMAINS={{.U.ALLOWED_EMAIL_DOMAINS}}
+    binds:
+      - /lzcapp/var/uploads:/app/data/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider -T 5 http://127.0.0.1:8080/api/health || wget -q --spider -T 5 http://127.0.0.1:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    depends_on:
+      - postgres
+
+  # postgres with pgvector — multica uses vector search for some skill APIs.
+  postgres:
+    image: registry.lazycat.cloud/lee/pgvector/pgvector:d8e4a5884f426878
+    environment:
+      - TZ=Asia/Shanghai
+      - POSTGRES_DB=multica
+      - POSTGRES_USER=multica
+      - POSTGRES_PASSWORD={{stable_secret "POSTGRES_PASSWORD"}}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    binds:
+      - /lzcapp/var/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U multica -d multica"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s

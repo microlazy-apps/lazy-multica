@@ -1,0 +1,79 @@
+source: https://github.com/multica-ai/multica
+source_author: multica-ai
+is_original: false
+keywords: ai-agent,coding-agent,claude-code,codex,copilot,llm,task-management,self-hosted,developer-tools,multica
+
+support_pc: true
+support_mobile: false
+
+screenshots:
+  pc:
+    - lazycat/screenshots/01-dashboard.png
+    - lazycat/screenshots/02-issues.png
+    - lazycat/screenshots/03-agent.png
+  mobile: []
+
+description:
+  zh-CN: |
+    Multica 是开源的托管式 AI 编码代理平台。把 Claude Code、Codex、
+    GitHub Copilot CLI、Gemini、Cursor Agent、Pi、Kimi 等编码 agent
+    当成真正可派活的远程同事 — 创建 issue、指派给 agent、agent 在
+    你本地机器（运行 multica daemon）上自动执行任务，结果回报到中央
+    工作区。
+
+    特性
+    - 11+ 编码 agent 集成（Claude Code / Codex / Copilot CLI / Gemini /
+      Cursor Agent / OpenClaw / OpenCode / Hermes / Pi / Kimi / Kiro CLI）
+    - 工作区 + 团队 + 多用户协作
+    - Issue 派单、运行历史、日志回放
+    - daemon 在用户本地执行，原生使用本地开发环境
+    - 邮箱验证码登录，可选 Google OAuth
+    - Postgres + pgvector，技能向量检索
+
+    依赖（已内置）
+    - PostgreSQL 17 with pgvector
+    数据持久化到 /lzcapp/var/{postgres,uploads}。
+
+    上游项目（修改版 Apache-2.0）：https://github.com/multica-ai/multica
+    本仓库（懒猫包装）：https://github.com/microlazy-apps/lazy-multica
+
+    ## 注意事项
+    1. multica 上游使用「修改版 Apache 2.0」许可，禁止：
+       - 将 multica 作为对第三方提供的托管/SaaS 服务
+       - 将 multica 嵌入商业产品后再分发
+       - 移除/修改前端 LOGO 与版权信息
+       单组织内部使用（包含多工作区）不受限制。
+    2. 派活给 AI agent 需要在 **你自己的本地机器** 安装 `multica` CLI
+       并保持 daemon 在线 — 服务端只做调度，不在懒猫盒子上跑 AI 模型。
+  en: |
+    Multica is an open-source managed AI coding agents platform. It turns
+    coding CLIs — Claude Code, Codex, GitHub Copilot CLI, Gemini, Cursor
+    Agent, Pi, Kimi, OpenClaw, OpenCode, Hermes, Kiro CLI — into real
+    teammates: file issues, assign them to an agent, the agent picks them
+    up on your local machine (running the multica daemon), and reports
+    progress back to your workspace.
+
+    Features
+    - 11+ coding agent integrations
+    - Workspaces, teams, multi-user collaboration
+    - Issue assignment, run history, log replay
+    - Daemon executes on the user's own machine — full access to local dev env
+    - Email verification login + optional Google OAuth
+    - Postgres + pgvector for skill embedding search
+
+    Built-in dependencies
+    - PostgreSQL 17 with pgvector
+    Data persists at /lzcapp/var/{postgres,uploads}.
+
+    Upstream project (modified Apache-2.0): https://github.com/multica-ai/multica
+    This wrapper repo: https://github.com/microlazy-apps/lazy-multica
+
+    ## Notes
+    1. Multica upstream uses a modified Apache 2.0 license, which forbids:
+       - Offering Multica as a hosted/SaaS service to third parties
+       - Embedding Multica inside a commercially distributed product
+       - Removing or modifying the frontend logo / copyright notices
+       Internal use within one organization (multi-workspace) is fine.
+    2. Assigning work to an AI agent requires installing the `multica` CLI
+       on **your own local machine** and keeping its daemon online — the
+       server only schedules tasks; it does not run AI models on the box.

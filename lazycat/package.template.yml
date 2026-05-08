@@ -1,0 +1,66 @@
+package: cloud.lazycat.app.multica
+version: ${VERSION}
+name: Multica
+description: 开源托管式 AI 编码代理平台 — 给 AI agent 派任务、跟进度、复用技能
+author: multica-ai
+license: Apache-2.0-modified
+homepage: https://github.com/microlazy-apps/lazy-multica
+locales:
+  zh-CN:
+    name: Multica
+    description: 开源的托管式 AI 编码代理平台。把 Claude Code、Codex、Copilot CLI、Gemini、Cursor Agent 等 AI agent 当成真正的"远程同事"使用 — 派工单、跟进度、积累可复用技能。
+    usage: |
+      ## 首次使用
+      1. 安装时填写「Multica 公开 URL」，例如 `https://multica.<your-box>.heiyu.space`
+      2. 安装完成后访问该 URL，输入邮箱接收登录验证码
+      3. 未配置 Resend 时，验证码会打印到 `backend` 容器日志，可在懒猫管理后台查看
+      4. 在本地机器安装 `multica` CLI 并启动 daemon 让 AI agent 接活：
+         ```sh
+         brew install multica-ai/tap/multica
+         multica setup self-host --server-url <MULTICA_APP_URL> --app-url <MULTICA_APP_URL>
+         ```
+      5. 在 Web UI 的「Settings → Agents」创建 agent，并把 issue 派给它
+
+      ## 资源占用
+      - 推荐配置：≥ 2 核 CPU，≥ 2GB 内存
+      - 自带 PostgreSQL 17 (pgvector) 一个内置依赖
+
+      ## 数据持久化
+      - PostgreSQL 数据：/lzcapp/var/postgres
+      - 上传文件：/lzcapp/var/uploads
+
+      ## 上游 / 重打包说明
+      上游项目（修改版 Apache-2.0）：https://github.com/multica-ai/multica
+      本仓库（懒猫包装）：https://github.com/microlazy-apps/lazy-multica
+      仅做镜像重打包 — 不修改 multica 源码、镜像或前端 LOGO。
+      上游 license 禁止移除/修改前端 LOGO 和版权信息，请勿对前端做二次定制。
+  en:
+    name: Multica
+    description: Open-source managed AI coding agents platform. Turn coding CLIs (Claude Code, Codex, Copilot CLI, Gemini, Cursor Agent, ...) into real teammates — assign tasks, track progress, compound reusable skills.
+    usage: |
+      ## Getting Started
+      1. At install, set "Multica Public URL" to e.g. `https://multica.<your-box>.heiyu.space`
+      2. After install, open that URL and request an email verification code
+      3. Without Resend configured, the code is printed to the `backend`
+         container logs (visible in the lazycat admin console)
+      4. Install the `multica` CLI on your local machine and start the daemon:
+         ```sh
+         brew install multica-ai/tap/multica
+         multica setup self-host --server-url <MULTICA_APP_URL> --app-url <MULTICA_APP_URL>
+         ```
+      5. In the web UI, go to Settings → Agents to create an agent, then
+         assign issues to it.
+
+      ## Resource requirements
+      - Recommended: ≥ 2 vCPU, ≥ 2 GB RAM
+      - Bundles PostgreSQL 17 with pgvector internally
+
+      ## Persistent data
+      - PostgreSQL data: /lzcapp/var/postgres
+      - Uploads:         /lzcapp/var/uploads
+
+      ## Upstream / repackaging note
+      Upstream project (modified Apache-2.0): https://github.com/multica-ai/multica
+      This wrapper repo: https://github.com/microlazy-apps/lazy-multica
+      Image-only repackaging — no source modification, no frontend logo
+      modification (the upstream license forbids it).
