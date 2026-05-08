@@ -1,4 +1,11 @@
 params:
+  - id: MULTICA_DEV_VERIFICATION_CODE
+    type: string
+    name: "固定登录验证码（仅私有部署）"
+    description: "⚠️ 公网可达的盒子请留空。设为 6 位数字（如 888888）后，所有账户的邮箱验证码都固定为该值，免去翻 backend 日志找随机码。设置时本应用自动切到 APP_ENV=development。留空 = 随机码（推荐）。"
+    default_value: ""
+    optional: true
+
   - id: ALLOW_SIGNUP
     type: string
     name: "允许新用户注册"

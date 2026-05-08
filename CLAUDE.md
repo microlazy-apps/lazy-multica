@@ -47,6 +47,8 @@ rewrite handler — confirmed in upstream `apps/web/next.config.ts`.
 | `GOOGLE_REDIRECT_URI`   | `https://{{.S.AppDomain}}/auth/callback`       |
 | `RESEND_*` / `GOOGLE_*` | deploy_params (optional)                       |
 | `ALLOW_SIGNUP` / `ALLOWED_*` | deploy_params (optional)                  |
+| `MULTICA_DEV_VERIFICATION_CODE` | deploy_param (optional). When set, sprig `if` flips `APP_ENV` from `production` → `development` so upstream honors the fixed code. |
+| `APP_ENV`               | `production` by default; flipped to `development` only if `MULTICA_DEV_VERIFICATION_CODE` is set |
 | `POSTGRES_PASSWORD` (postgres + DATABASE_URL) | `stable_secret "POSTGRES_PASSWORD"` — same key on both ends |
 
 `.S.AppDomain` is a built-in lazycat template var that resolves to

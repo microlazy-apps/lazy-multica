@@ -41,7 +41,12 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - PORT=8080
-      - APP_ENV=production
+      # APP_ENV gates upstream's "fixed verification code" feature.
+      # Production = random 6-digit codes (printed to logs without Resend).
+      # When the user sets MULTICA_DEV_VERIFICATION_CODE we flip to development
+      # so the upstream backend honors it.
+      - APP_ENV={{ if .U.MULTICA_DEV_VERIFICATION_CODE }}development{{ else }}production{{ end }}
+      - MULTICA_DEV_VERIFICATION_CODE={{.U.MULTICA_DEV_VERIFICATION_CODE}}
       - DATABASE_URL=postgres://multica:{{stable_secret "POSTGRES_PASSWORD"}}@postgres:5432/multica?sslmode=disable
       - JWT_SECRET={{stable_secret "JWT_SECRET"}}
       # Public URL of this lazycat app, derived from the lazycat box's

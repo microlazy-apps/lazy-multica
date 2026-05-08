@@ -15,6 +15,7 @@
 | 参数 | 用途 |
 |------|------|
 | `RESEND_API_KEY` + `RESEND_FROM_EMAIL` | 邮箱验证码通过 [Resend](https://resend.com) 发送；不填则验证码打印到 backend 容器日志（私有部署够用） |
+| `MULTICA_DEV_VERIFICATION_CODE` | 设为 6 位数字（如 `888888`）→ 自动切到 `APP_ENV=development`，所有账户的邮箱验证码都固定为该值。⚠️ **公网可达的盒子请留空** — 否则知道邮箱的人都能登录 |
 | `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` | Google OAuth 登录（在 Google Cloud Console 把回调 URL 设为 `https://multica.<your-box-domain>/auth/callback`） |
 | `ALLOW_SIGNUP` | 是否允许公开注册（默认 `true`） |
 | `ALLOWED_EMAILS` / `ALLOWED_EMAIL_DOMAINS` | 邮箱白名单（与 `ALLOW_SIGNUP=false` 搭配使用） |
