@@ -4,20 +4,39 @@
 
 ## Architecture
 
-**Retag-only main image + 2 pre-mirrored dependencies** (multi-service stack).
+**Vendor + patches main + 2 pre-mirrored dependencies** (multi-service stack).
 
-- `main` = upstream `ghcr.io/multica-ai/multica-web` (Next.js 16 standalone, port 3000).
-  `docker/Dockerfile` is a single-line `FROM ghcr.io/multica-ai/multica-web@sha256:...`
-  so the lazycat-ci `lpk-build.yml` reusable mirrors it into the
-  lazycat registry as `${LAZYCAT_IMAGE}`.
+- `main` = built from `vendor/multica` (git subtree of upstream@v0.2.27)
+  using `vendor/multica/Dockerfile` (which `patches/01-…` overwrites
+  with the upstream `Dockerfile.web` content). lazycat-ci pushes the
+  built image to GHCR, then mirrors it into the lazycat registry as
+  `${LAZYCAT_IMAGE}`.
 - `backend` = upstream `ghcr.io/multica-ai/multica-backend` (Go server +
-  REST + WebSocket, port 8080), pre-mirrored to `registry.lazycat.cloud`.
-- `postgres` = `pgvector/pgvector:pg17`, pre-mirrored to `registry.lazycat.cloud`.
+  REST + WebSocket, port 8080), pre-mirrored to `registry.lazycat.cloud`
+  (no source change needed for backend — the runtime URL flows in via
+  env vars).
+- `postgres` = `pgvector/pgvector:pg17`, pre-mirrored to
+  `registry.lazycat.cloud`.
 
-No upstream source vendoring, no `patches/`. Multica's modified Apache
-2.0 license restricts SaaS hosting + commercial embedding + frontend
-logo modification (see `LICENSE`); we redistribute only the prebuilt
-images upstream publishes themselves.
+We vendor the **frontend** because upstream's
+`packages/views/runtimes/components/connect-remote-dialog.tsx` hard-codes
+`https://api.multica.ai` / `https://multica.ai` into the "Configure CLI"
+step shown to self-host users. Those strings are baked into the Next.js
+standalone bundle at build time, so the only way to swap them is to
+rebuild from source. `patches/02-…` rewrites the constant to derive the
+URL from `window.location.origin` at runtime, so every self-host
+deployment auto-shows its actual subdomain.
+
+Multica's modified Apache 2.0 license permits source-derivative builds
+(internal use, no SaaS hosting, no logo removal) — vendoring +
+patches is auditable and within the license terms.
+
+## Patches
+
+| File | What it does |
+|------|--------------|
+| `patches/01-lazycat-web-dockerfile.patch` | Replaces vendor's root `Dockerfile` (originally the backend build) with the contents of `Dockerfile.web` so `docker build` at `./vendor/multica` produces the web image without needing a `dockerfile:` override (which lazycat-ci's `lpk-build.yml` doesn't expose). |
+| `patches/02-lazycat-runtimes-configure-url.patch` | Rewrites `CONFIGURE_CMD` in `packages/views/runtimes/components/connect-remote-dialog.tsx` to read `window.location.origin` at runtime instead of the hard-coded `https://api.multica.ai`. |
 
 ## Routing
 
@@ -146,7 +165,11 @@ curl -sSI "https://registry-1.docker.io/v2/pgvector/pgvector/manifests/pg17" \
 
 ## Source-of-truth files
 
-- `docker/Dockerfile` — pins the **web** (main) image
+- `vendor/multica/` — git subtree of upstream `multica-ai/multica@v0.2.27`
+  (refresh via `git subtree pull --prefix=vendor/multica
+  https://github.com/multica-ai/multica.git <tag> --squash`)
+- `patches/*.patch` — applied by lazycat-ci at build time via
+  `git apply -p1 --directory=vendor/multica`
 - `lazycat/lzc-manifest.template.yml` — pins **backend** + **postgres**
   via `registry.lazycat.cloud/lee/...` URLs
 - `lazycat/lzc-deploy-params.yml` — install-time inputs
@@ -154,3 +177,26 @@ curl -sSI "https://registry-1.docker.io/v2/pgvector/pgvector/manifests/pg17" \
   substituted from CI
 - `lazycat/appstore.yml` — extra metadata used by the appstore submit
   step (description, screenshots, keywords, source)
+
+## Re-rolling the patches against a new upstream version
+
+```sh
+# 1. Pull the new upstream tag into vendor
+git subtree pull --prefix=vendor/multica \
+  https://github.com/multica-ai/multica.git vX.Y.Z --squash
+
+# 2. Verify patches still apply
+for p in patches/*.patch; do
+  git apply --check "$p" -p1 --directory=vendor/multica
+done
+
+# 3. If a patch fails (upstream moved the lines), apply, edit, regenerate:
+git apply patches/02-lazycat-runtimes-configure-url.patch -p1 --directory=vendor/multica
+# ... fix conflicts in vendor/multica/...tsx ...
+git diff --no-color --relative=vendor/multica \
+  vendor/multica/packages/views/runtimes/components/connect-remote-dialog.tsx \
+  > patches/02-lazycat-runtimes-configure-url.patch
+git checkout HEAD -- vendor/multica/packages/views/runtimes/components/connect-remote-dialog.tsx
+
+# 4. Bump the wrapper version, tag, push.
+```

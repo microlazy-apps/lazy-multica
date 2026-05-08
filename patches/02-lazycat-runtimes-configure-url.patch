@@ -1,0 +1,33 @@
+diff --git a/packages/views/runtimes/components/connect-remote-dialog.tsx b/packages/views/runtimes/components/connect-remote-dialog.tsx
+index 6ce539f2..d8726041 100644
+--- a/packages/views/runtimes/components/connect-remote-dialog.tsx
++++ b/packages/views/runtimes/components/connect-remote-dialog.tsx
+@@ -118,8 +118,17 @@ export function ConnectRemoteDialog({ onClose }: { onClose: () => void }) {
+ 
+ const INSTALL_CMD = "curl -fsSL https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.sh | bash";
+ 
+-const CONFIGURE_CMD = `multica config set server_url https://api.multica.ai
+-multica config set app_url https://multica.ai`;
++// lazycat: derive config URLs from the current window origin so self-hosted
++// users see their actual deployment URL instead of upstream's SaaS hostnames.
++const DEFAULT_CONFIGURE_ORIGIN = "https://multica.ai";
++function getConfigureCmd(): string {
++  const origin =
++    typeof window !== "undefined" && window.location?.origin
++      ? window.location.origin
++      : DEFAULT_CONFIGURE_ORIGIN;
++  return `multica config set server_url ${origin}
++multica config set app_url ${origin}`;
++}
+ 
+ const LOGIN_CMD = "multica login --token <YOUR_TOKEN>";
+ 
+@@ -200,7 +209,7 @@ function InstructionsStep({
+               {t(($) => $.connect.step2)}
+             </div>
+             <CodeBlock
+-              code={CONFIGURE_CMD}
++              code={getConfigureCmd()}
+               copyKey="config"
+               copied={copied}
+               onCopy={onCopy}
