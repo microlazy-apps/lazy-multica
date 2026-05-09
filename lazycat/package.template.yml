@@ -16,15 +16,25 @@ locales:
     name: Multica
     description: 开源的托管式 AI 编码代理平台。把 Claude Code、Codex、Copilot CLI、Gemini、Cursor Agent 等 AI agent 当成真正的"远程同事"使用 — 派工单、跟进度、积累可复用技能。
     usage: |
-      ## 首次使用
-      1. 安装完成后访问 `https://multica.<your-box>.heiyu.space`，输入邮箱接收登录验证码
-      2. 未配置 Resend 时，验证码会打印到 `backend` 容器日志，可在懒猫管理后台查看
-      3. 在本地机器安装 `multica` CLI 并启动 daemon 让 AI agent 接活：
+      ## 默认登录方式（开箱即用）
+      1. 访问 `https://multica.<your-box>.heiyu.space`
+      2. 邮箱填**任意值**（如 `me@example.com`），点"发送验证码"
+      3. 验证码输入框里填默认值 **`888888`** → 即可登录
+
+      "固定登录验证码"已默认设为 `888888`，所以不需要配置任何
+      邮件服务。⚠️ 公网可达的盒子建议在「应用设置」清空此参数，
+      改用随机验证码（验证码会打印到 backend 容器日志）。
+
+      ## 派活给 AI agent（在你本地机器上）
+      1. 在你的本地机器安装 `multica` CLI：
          ```sh
          brew install multica-ai/tap/multica
-         multica setup self-host --server-url https://multica.<your-box> --app-url https://multica.<your-box>
+         multica setup self-host \
+           --server-url https://multica.<your-box>.heiyu.space \
+           --app-url    https://multica.<your-box>.heiyu.space
          ```
-      4. 在 Web UI 的「Settings → Agents」创建 agent，并把 issue 派给它
+      2. 在 Web UI 的「Settings → Agents」创建 agent，把 issue 派给它
+      3. agent 在你本地机器上自动接活、跑代码、回报结果
 
       ## 资源占用
       - 推荐配置：≥ 2 核 CPU，≥ 2GB 内存
@@ -43,18 +53,28 @@ locales:
     name: Multica
     description: Open-source managed AI coding agents platform. Turn coding CLIs (Claude Code, Codex, Copilot CLI, Gemini, Cursor Agent, ...) into real teammates — assign tasks, track progress, compound reusable skills.
     usage: |
-      ## Getting Started
-      1. After install, open `https://multica.<your-box>.heiyu.space`
-         and request an email verification code
-      2. Without Resend configured, the code is printed to the `backend`
-         container logs (visible in the lazycat admin console)
-      3. Install the `multica` CLI on your local machine and start the daemon:
+      ## Default login (zero-config)
+      1. Open `https://multica.<your-box>.heiyu.space`
+      2. Email: **any value** (e.g. `me@example.com`), click "Send code"
+      3. Verification code: **`888888`** → you're in.
+
+      The deploy param "Fixed verification code" defaults to `888888`,
+      so no email service is required for first login. ⚠️ For
+      publicly-reachable boxes, clear this param in the app settings
+      and use random codes (printed to the `backend` container logs).
+
+      ## Run AI agents on your own machine
+      1. Install the `multica` CLI locally:
          ```sh
          brew install multica-ai/tap/multica
-         multica setup self-host --server-url https://multica.<your-box> --app-url https://multica.<your-box>
+         multica setup self-host \
+           --server-url https://multica.<your-box>.heiyu.space \
+           --app-url    https://multica.<your-box>.heiyu.space
          ```
-      4. In the web UI, go to Settings → Agents to create an agent, then
+      2. In the web UI, go to Settings → Agents to create an agent, then
          assign issues to it.
+      3. The agent runs locally on your machine, picks up tasks, and
+         reports progress to your workspace.
 
       ## Resource requirements
       - Recommended: ≥ 2 vCPU, ≥ 2 GB RAM

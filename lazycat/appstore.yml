@@ -31,6 +31,11 @@ description:
     - 邮箱验证码登录，可选 Google OAuth
     - Postgres + pgvector，技能向量检索
 
+    ## 默认登录（开箱即用）
+    安装后任意邮箱 + 验证码 **`888888`** 即可登录 — 无需配置邮件服务。
+    ⚠️ 公网可达的盒子建议在应用设置中清空"固定登录验证码"，改用
+    随机验证码（会打印到 backend 容器日志）。
+
     依赖（已内置）
     - PostgreSQL 17 with pgvector
     数据持久化到 /lzcapp/var/{postgres,uploads}。
@@ -61,6 +66,12 @@ description:
     - Daemon executes on the user's own machine — full access to local dev env
     - Email verification login + optional Google OAuth
     - Postgres + pgvector for skill embedding search
+
+    ## Default login (zero-config)
+    After install: any email + verification code **`888888`** → you're in.
+    No email service required. ⚠️ For publicly-reachable boxes, clear
+    the "Fixed verification code" param in the app settings to fall back
+    to random codes (printed to the backend container logs).
 
     Built-in dependencies
     - PostgreSQL 17 with pgvector
